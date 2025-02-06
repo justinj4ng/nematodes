@@ -1,12 +1,9 @@
-# Load required packages
 library(tidyverse)
 library(lubridate)
 library(ggplot2)
 
 setwd("C:/Users/Justin Jang/Documents/nematodes")
-
-# Read the data
-nema_data <- read_csv("nematodes.csv")  # Make sure file is in working directory
+nema_data <- read_csv("nematodes.csv")
 
 # Initial data inspection
 glimpse(nema_data)
