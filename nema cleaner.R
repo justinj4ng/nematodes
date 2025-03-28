@@ -1,0 +1,82 @@
+# Name: Justin Jang (Github: justinj4ng)
+# Nematode data cleaner
+# Last modified 3/19/2025
+
+###
+#
+#How do you do docstrings in R??
+#Dedicated to Nema the dog
+#Frivolous comments bc i dont know R
+###
+
+library("tidyverse")
+library("dplyr")
+library("patchwork")  # For combining plots
+
+setwd("C:/Users/justi/Downloads/nematodes csv-20250327T192853Z-001/nematodes csv")
+
+# Read and prepare data
+nema <- read_csv("nema.csv")
+nema$Date <- as.Date(nema$Date, format="%m/%d/%Y")
+
+# Reshape data to long format
+nemaDF <- nema |>
+  pivot_longer(
+    cols = c("SFV", "SPP", "OPP", "OMN", "EBA", "BBA", "APR", "PRE"),
+    names_to = "functional_class",
+    values_to = "proportion",
+    values_drop_na = TRUE
+  )
+
+# Create a list to store plots
+plot_list <- list()
+
+# Define color palette
+group_colors <- RColorBrewer::brewer.pal(8, "Set1")
+
+# Create a plot for each unique Plot number
+for (plot_num in unique(nemaDF$`Plot #`)) {
+  plot_data <- nemaDF %>% filter(`Plot #` == plot_num)
+  
+  p <- ggplot(plot_data, aes(x = Date, y = proportion, color = functional_class)) +
+    geom_line(size = 1) +
+    geom_point(size = 2) +
+    theme_bw(base_size = 12) +
+    labs(title = paste("Plot", plot_num, "Functional Group Trends"),
+         x = "Date",
+         y = "Proportion",
+         color = "Functional Group") +
+    scale_color_manual(values = group_colors) +
+    scale_x_date(date_breaks = "1 month", date_labels = "%b %Y") +
+    scale_y_continuous(limits = c(0, 1.0)) +  # Consistent y-axis across plots
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          plot.title = element_text(hjust = 0.5, size = 14),
+          legend.position = "bottom") +
+    guides(color = guide_legend(nrow = 2))  # Two rows for legend items
+  
+  plot_list[[as.character(plot_num)]] <- p
+}
+
+# Combine plots (4 in one figure)
+combined_plots <- wrap_plots(plot_list, ncol = 2) + 
+  plot_layout(guides = "collect") & 
+  theme(legend.position = "bottom")
+
+# Display combined plot
+combined_plots
+
+# Save combined plot
+ggsave("nematode_functional_groups_by_plot.png", 
+       plot = combined_plots,
+       width = 14,
+       height = 10,
+       dpi = 300)
+
+# Optionally save individual plots
+for (plot_num in names(plot_list)) {
+  ggsave(paste0("nematode_plot_", plot_num, ".png"), 
+         plot = plot_list[[plot_num]],
+         width = 8,
+         height = 6,
+         dpi = 300)
+}
