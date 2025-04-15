@@ -1,5 +1,5 @@
 # Name: Justin Jang (Github: justinj4ng)
-# Nematode data cleaner
+# Nematode data cleaner, pass to ggplot and make graphs
 # Last modified 3/19/2025
 
 ###
@@ -13,7 +13,7 @@ library("tidyverse")
 library("dplyr")
 library("patchwork")  # For combining plots
 
-setwd("C:/Users/justi/Downloads/nematodes csv-20250327T192853Z-001/nematodes csv")
+setwd("C:/Users/justi/Documents/nematodes/nema")
 
 # Read and prepare data
 nema <- read_csv("nema.csv")
