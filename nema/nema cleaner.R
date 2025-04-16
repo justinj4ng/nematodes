@@ -22,7 +22,7 @@ nema$Date <- as.Date(nema$Date, format="%m/%d/%Y")
 # Reshape data to long format
 nemaDF <- nema |>
   pivot_longer(
-    cols = c("SFV", "SPP", "OPP", "OMN", "EBA", "BBA", "APR", "PRE"),
+    cols = c("SFV/SPP", "OPP", "OMN", "EBA", "BBA", "APR", "PRE"),
     names_to = "functional_class",
     values_to = "proportion",
     values_drop_na = TRUE
@@ -32,7 +32,7 @@ nemaDF <- nema |>
 plot_list <- list()
 
 # Define color palette
-group_colors <- RColorBrewer::brewer.pal(8, "Set1")
+group_colors <- RColorBrewer::brewer.pal(7, "Set1")
 
 # Create a plot for each unique Plot number
 for (plot_num in unique(nemaDF$`Plot #`)) {
